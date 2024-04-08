@@ -1,6 +1,7 @@
 from numpy import random
 import time
 
+
 #Step1 choose 3 sorting algorithms quicksort mergesort insertionsort
 
 #Step2 implement sorting algorithms
@@ -38,15 +39,34 @@ Array100=random.randint(10000,size = 100)
 Array1000=random.randint(10000,size = 1000)
 Array10000=random.randint(10000,size =10000)
 
+
 #Step4 Measure Execution time
 start = time.time()
-
-print(Array10)
 quicksort(Array10,0,9)
-print(Array10)
-
 end = time.time()
-print("Time for running quicksort")
+
+print("Time for running quicksort with 10 elements")
+print (end-start)
+
+start = time.time()
+quicksort(Array100,0,99)
+end = time.time()
+
+print("Time for running quicksort with 100 elements")
+print (end-start)
+
+start = time.time()
+quicksort(Array1000,0,999)
+end = time.time()
+
+print("Time for running quicksort with 1000 elements")
+print (end-start)
+
+start = time.time()
+quicksort(Array10000,0,9999)
+end = time.time()
+
+print("Time for running quicksort with 10000 elements")
 print (end-start)
 
 #Step5 analyze time complexity
