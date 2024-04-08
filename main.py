@@ -33,42 +33,19 @@ def quicksort(array, low, high):
     
 
 
-#Step3 Generate random Data
-Array10=random.randint(10000,size =10)
-Array100=random.randint(10000,size = 100)
-Array1000=random.randint(10000,size = 1000)
-Array10000=random.randint(10000,size =10000)
+arraySizes = [10,100,1000,10000,100000]
+quicksortruntime =[]
 
+for i in arraySizes:
+    #Step3 Generate random Data
+    array=random.randint(100000,size = i)
+    start = time.time()
+    #Step4 Measure Execution time
+    quicksort(array,0,i-1)
+    end = time.time()
+    quicksortruntime.append(end-start)
 
-#Step4 Measure Execution time
-start = time.time()
-quicksort(Array10,0,9)
-end = time.time()
-
-print("Time for running quicksort with 10 elements")
-print (end-start)
-
-start = time.time()
-quicksort(Array100,0,99)
-end = time.time()
-
-print("Time for running quicksort with 100 elements")
-print (end-start)
-
-start = time.time()
-quicksort(Array1000,0,999)
-end = time.time()
-
-print("Time for running quicksort with 1000 elements")
-print (end-start)
-
-start = time.time()
-quicksort(Array10000,0,9999)
-end = time.time()
-
-print("Time for running quicksort with 10000 elements")
-print (end-start)
-
+print(quicksortruntime)
 #Step5 analyze time complexity
 """
 Time complexity of quicksort
