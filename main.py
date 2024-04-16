@@ -1,234 +1,184 @@
-from numpy import random as r
-import time
-
 import random
+import timeit
+import csv
+import matplotlib.pyplot as plt
 
-#Step1 choose 3 sorting algorithms quicksort mergesort insertionsort
+#CS404 MINI Project
+#Name: David Lee
 
-#Step2 implement sorting algorithms
-"""
-#quicksort implementation
-def partition(array, first, last):
-    #choose last element as pivot
-    pivot = array[last]
-    
-    #big pointer
-    p= first-1
-    
-    #iterate through the array comparing with the pivot
-    for i in range(first,last):
-        if array[i]<=pivot:
-            p = p + 1
-            
-            #swap element
-            (array[p],array[i])=(array[i],array[p])
-    #swap pivot with greater element
-    (array[p+1],array[last])=(array[last],array[p+1])
-    return p+1
-    
-def quicksort(array, low, high):
-    if low<high:
-        pi = partition(array,low,high)
-        quicksort(array,low,pi-1)
-        quicksort(array,pi+1,high)
-"""
 
-# Python implementation QuickSort using 
-# Lomuto's partition Scheme.
+def quicksort(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quicksort(left) + middle + quicksort(right)
 
-'''
-The function which implements QuickSort.
-arr :- array to be sorted.
-start :- starting index of the array.
-stop :- ending index of the array.
-'''
-def quicksort(arr, start , stop):
-	if(start < stop):
-		
-		# pivotindex is the index where 
-		# the pivot lies in the array
-		pivotindex = partitionrand(arr,\
-							start, stop)
-		
-		# At this stage the array is 
-		# partially sorted around the pivot. 
-		# Separately sorting the 
-		# left half of the array and the
-		# right half of the array.
-		quicksort(arr , start , pivotindex-1)
-		quicksort(arr, pivotindex + 1, stop)
 
-# This function generates random pivot,
-# swaps the first element with the pivot 
-# and calls the partition function.
-def partitionrand(arr , start, stop):
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
 
-	# Generating a random number between the 
-	# starting index of the array and the
-	# ending index of the array.
-	randpivot = random.randrange(start, stop)
+    mid = len(arr) // 2
+    left = arr[:mid]
+    right = arr[mid:]
 
-	# Swapping the starting element of
-	# the array and the pivot
-	arr[start], arr[randpivot] = \
-		arr[randpivot], arr[start]
-	return partition(arr, start, stop)
+    left = merge_sort(left)
+    right = merge_sort(right)
 
-'''
-This function takes the first element as pivot, 
-places the pivot element at the correct position 
-in the sorted array. All the elements are re-arranged 
-according to the pivot, the elements smaller than the
-pivot is places on the left and the elements
-greater than the pivot is placed to the right of pivot.
-'''
-def partition(arr,start,stop):
-	pivot = start # pivot
-	
-	# a variable to memorize where the 
-	i = start + 1
-	
-	# partition in the array starts from.
-	for j in range(start + 1, stop + 1):
-		
-		# if the current element is smaller
-		# or equal to pivot, shift it to the
-		# left side of the partition.
-		if arr[j] <= arr[pivot]:
-			arr[i] , arr[j] = arr[j] , arr[i]
-			i = i + 1
-	arr[pivot] , arr[i - 1] =\
-			arr[i - 1] , arr[pivot]
-	pivot = i - 1
-	return (pivot)
+    return merge(left, right)
 
-# Driver Code
-if __name__ == "__main__":
-	array = [10, 7, 8, 9, 1, 5]
-	quicksort(array, 0, len(array) - 1)
-	print(array)
+def merge(left, right):
+    result = []
+    i = j = 0
 
-# This code is contributed by soumyasaurav
-
-#mergesort implementation
-#https://www.geeksforgeeks.org/python-program-for-merge-sort/
-def merge(arr, l, m, r):
-    n1 = m - l + 1
-    n2 = r - m
- 
-    # create temp arrays
-    L = [0] * (n1)
-    R = [0] * (n2)
- 
-    # Copy data to temp arrays L[] and R[]
-    for i in range(0, n1):
-        L[i] = arr[l + i]
- 
-    for j in range(0, n2):
-        R[j] = arr[m + 1 + j]
- 
-    # Merge the temp arrays back into arr[l..r]
-    i = 0     # Initial index of first subarray
-    j = 0     # Initial index of second subarray
-    k = l     # Initial index of merged subarray
- 
-    while i < n1 and j < n2:
-        if L[i] <= R[j]:
-            arr[k] = L[i]
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            result.append(left[i])
             i += 1
         else:
-            arr[k] = R[j]
+            result.append(right[j])
             j += 1
-        k += 1
- 
-    # Copy the remaining elements of L[], if there
-    # are any
-    while i < n1:
-        arr[k] = L[i]
-        i += 1
-        k += 1
- 
-    # Copy the remaining elements of R[], if there
-    # are any
-    while j < n2:
-        arr[k] = R[j]
-        j += 1
-        k += 1
- 
-# l is for left index and r is right index of the
-# sub-array of arr to be sorted
- 
- 
-def mergeSort(arr, l, r):
-    if l < r:
- 
-        # Same as (l+r)//2, but avoids overflow for
-        # large l and h
-        m = l+(r-l)//2
- 
-        # Sort first and second halves
-        mergeSort(arr, l, m)
-        mergeSort(arr, m+1, r)
-        merge(arr, l, m, r)
- 
-#insertionsort implementation
-def insertionSort(arr,n):
-    if n <= 1:
-        return  # If the array has 0 or 1 element, it is already sorted, so return
- 
-    for i in range(1, n):  # Iterate over the array starting from the second element
-        key = arr[i]  # Store the current element as the key to be inserted in the right position
-        j = i-1
-        while j >= 0 and key < arr[j]:  # Move elements greater than key one position ahead
-            arr[j+1] = arr[j]  # Shift elements to the right
-            j -= 1
-        arr[j+1] = key  # Insert the key in the correct position
 
-arraySizes = [10,100,1000]
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+
+
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+    return arr
+
+def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+    return arr
+
+def selection_sort(arr):
+    for i in range(len(arr)):
+        min_idx = i
+        for j in range(i+1, len(arr)):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    return arr
+
+def timsort(arr):
+    return sorted(arr)
+
+def counting_sort(arr):
+    max_value = max(arr)
+    count = [0] * (max_value + 1)
+
+    for num in arr:
+        count[num] += 1
+
+    sorted_arr = []
+    for i in range(len(count)):
+        sorted_arr.extend([i] * count[i])
+
+    return sorted_arr
+
+def radix_sort(arr):
+    RADIX = 10
+    placement = 1
+    max_digit = max(arr)
+
+    while placement < max_digit:
+        buckets = [list() for _ in range(RADIX)]
+        for i in arr:
+            tmp = int((i / placement) % RADIX)
+            buckets[tmp].append(i)
+        a = 0
+        for b in range(RADIX):
+            for i in buckets[b]:
+                arr[a] = i
+                a += 1
+        placement *= RADIX
+    return arr
+
+
+arraySizes = [10,100,1000,10000]
 quickSortRunTime = []
 mergeSortRunTime = []
+bubbleSortRunTime = []
 insertionSortRunTime = []
-pythonDefaultSort =[]
+selectionSortRunTime = []
+python_timSort =[]
+countingSortRunTime = []
+radixSortRunTime = []
+
+
+# Function to measure execution time of a sorting algorithm
+def measure_time(sort_func, arr):
+    start_time = timeit.default_timer()
+    sort_func(arr)
+    end_time = timeit.default_timer()
+    return end_time - start_time
+
+# Measure execution time for each sorting algorithm
 for i in arraySizes:
-    #Step3 Generate random Data
-    array=r.randint(100000,size = i)
+    array = random.sample(range(100000), i)
     copyarray = array.copy()
     copyarray2 = array.copy()
     copyarray3 = array.copy()
-    
-    #Step4 Measure Execution time
-    start = time.time()
-    quicksort(array,0,i-1)
-    end = time.time()
-    quickSortRunTime.append(end-start)
-    
-    start = time.time()
-    mergeSort(copyarray,0,i-1)
-    end = time.time()
-    mergeSortRunTime.append(end-start)
-    
-    start = time.time()
-    insertionSort(copyarray2,i)
-    end = time.time()
-    insertionSortRunTime.append(end-start)
-    
-    start = time.time()
-    copyarray3.sort()
-    end = time.time()
-    pythonDefaultSort.append(end-start)
-    
+    copyarray4 = array.copy()
+    copyarray5 = array.copy()
+    copyarray6 = array.copy()
+    copyarray7 = array.copy()
 
-print(quickSortRunTime)
-print(mergeSortRunTime)
-print(insertionSortRunTime)
-print(pythonDefaultSort)
+    quickSortRunTime.append(measure_time(quicksort, array))
+    mergeSortRunTime.append(measure_time(merge_sort, copyarray))
+    bubbleSortRunTime.append(measure_time(bubble_sort, copyarray2))
+    insertionSortRunTime.append(measure_time(insertion_sort, copyarray3))
+    selectionSortRunTime.append(measure_time(selection_sort, copyarray4))
+    python_timSort.append(measure_time(timsort, copyarray5))
+    countingSortRunTime.append(measure_time(counting_sort, copyarray6))
+    radixSortRunTime.append(measure_time(radix_sort, copyarray7))
 
+# Generate the chart
+plt.plot(arraySizes, quickSortRunTime, label='Quick Sort')
+plt.plot(arraySizes, mergeSortRunTime, label='Merge Sort')
+plt.plot(arraySizes, bubbleSortRunTime, label='Bubble Sort')
+plt.plot(arraySizes, insertionSortRunTime, label='Insertion Sort')
+plt.plot(arraySizes, selectionSortRunTime, label='Selection Sort')
+plt.plot(arraySizes, python_timSort, label='Python TimSort')
+plt.plot(arraySizes, countingSortRunTime, label='Counting Sort')
+plt.plot(arraySizes, radixSortRunTime, label='Radix Sort')
 
-#Step5 analyze time complexity
-"""
-Time complexity of quicksort
-Average nlogn
-Worst n^2
-"""
-#Step6 Visualize the Data
-#maybe run a loop and calculate average time for each size and algorithm
+# Add labels and title
+plt.xlabel('Array Size')
+plt.ylabel('Execution Time (seconds)')
+plt.title('Comparison of Sorting Algorithms')
+# Add labels and title
+plt.xlabel('Array Size')
+plt.ylabel('Execution Time (seconds)')
+plt.title('Comparison of Sorting Algorithms')
+
+# Change y axis to log scale
+plt.yscale('log')
+plt.xscale('log')
+# Add legend
+plt.legend()
+
+# Show the chart
+plt.show()
+
+# Export arrays to CSV file
+with open('sorting_runtimes.csv', 'w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(['Array Size', 'Quick Sort', 'Merge Sort', 'Bubble Sort', 'Insertion Sort', 'Selection Sort', 'Python TimSort', 'Counting Sort', 'Radix Sort'])
+    for i in range(len(arraySizes)):
+        writer.writerow([arraySizes[i], quickSortRunTime[i], mergeSortRunTime[i], bubbleSortRunTime[i], insertionSortRunTime[i], selectionSortRunTime[i], python_timSort[i], countingSortRunTime[i], radixSortRunTime[i]])
+
