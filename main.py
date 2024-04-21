@@ -166,7 +166,7 @@ plt.xlabel('Array Size')
 plt.ylabel('Execution Time (seconds)')
 plt.title('Comparison of Sorting Algorithms')
 
-# Change y axis to log scale
+# Change axis to log scale
 plt.yscale('log')
 plt.xscale('log')
 # Add legend
